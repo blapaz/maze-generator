@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using System;
+using System.IO;
 
 namespace MazeGenerator
 {
@@ -7,17 +8,14 @@ namespace MazeGenerator
     {
         public class Options
         {
-            [Option('w', "width", Required = false, HelpText = "Set the width of the maze that will be generated.")]
-            public string Width { get; set; }
+            [Option('w', "width", Required = false, Default = 10, HelpText = "Set the width of the maze that will be generated.")]
+            public int Width { get; set; }
 
-            [Option('h', "height", Required = false, HelpText = "Set the height of the maze that will be generated.")]
-            public string Height { get; set; }
+            [Option('h', "height", Required = false, Default = 10, HelpText = "Set the height of the maze that will be generated.")]
+            public int Height { get; set; }
 
-            [Option('s', "size", Required = false, HelpText = "Set the size of the maze that will be generated (width,height).")]
-            public string Size { get; set; }
-
-            [Option('n', "noise", Required = false, HelpText = "Set the noise of the maze that will be generated.")]
-            public string Noise { get; set; }
+            [Option('n', "noise", Required = false, Default = 2, HelpText = "Set the noise of the maze that will be generated.")]
+            public int Noise { get; set; }
 
             [Option('p', "path", Required = false, HelpText = "Set the path where the maze file will be created.")]
             public string Path { get; set; }
@@ -25,11 +23,23 @@ namespace MazeGenerator
 
         static void Main(string[] args)
         {
+            Maze maze = new Maze();
+            string path = Directory.GetCurrentDirectory();
+
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(o =>
                 {
-                    Console.WriteLine("Path Set: " + o.Path);
+                    maze.Width = o.Width;
+                    maze.Height = o.Height;
+                    maze.Noise = o.Noise;
+
+                    if (o.Path.Length > 0)
+                        path = o.Path;        
                 });
+
+            Console.WriteLine("Generating Maze");
+            maze.Generate();
+            Console.WriteLine("Generation Complete");
 
             Console.Read();
         }
