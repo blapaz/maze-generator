@@ -24,6 +24,9 @@ namespace MazeGenerator
 
             [Option('d', "debug", Required = false, Default = false, HelpText = "If enabled output will show in the console and remain open.")]
             public bool Debug { get; set; }
+
+            [Option('v', "view", Required = false, Default = false, HelpText = "If enabled maze will show in default photo viewer after generation.")]
+            public bool View { get; set; }
         }
 
         static void Main(string[] args)
@@ -69,6 +72,16 @@ namespace MazeGenerator
             {
                 Console.WriteLine("Generation Complete");
                 Console.Read();
+            }
+
+            if (shouldView)
+            { 
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = img,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
             }
         }
     }
