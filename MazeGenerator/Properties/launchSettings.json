@@ -2,7 +2,7 @@
   "profiles": {
     "MazeGenerator": {
       "commandName": "Project",
-      "commandLineArgs": "-p \"./\""
+      "commandLineArgs": "-h 20 -w 20 -p \"./\""
     }
   }
 }

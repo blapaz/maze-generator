@@ -14,7 +14,7 @@ namespace MazeGenerator
             [Option('h', "height", Required = false, Default = 10, HelpText = "Set the height of the maze that will be generated.")]
             public int Height { get; set; }
 
-            [Option('n', "noise", Required = false, Default = 2, HelpText = "Set the noise of the maze that will be generated.")]
+            [Option('n', "noise", Required = false, Default = 5, HelpText = "Set the noise of the maze that will be generated.")]
             public int Noise { get; set; }
 
             [Option('p', "path", Required = false, HelpText = "Set the path where the maze file will be created.")]
