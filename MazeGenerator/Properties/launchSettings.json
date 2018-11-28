@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MazeGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "-p \"./\""
+    }
+  }
+}
