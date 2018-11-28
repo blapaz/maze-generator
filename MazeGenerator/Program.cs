@@ -1,6 +1,8 @@
 ﻿using CommandLine;
 using System;
 using System.IO;
+using System.Drawing;
+using System.Diagnostics;
 
 namespace MazeGenerator
 {
@@ -19,12 +21,17 @@ namespace MazeGenerator
 
             [Option('p', "path", Required = false, HelpText = "Set the path where the maze file will be created.")]
             public string Path { get; set; }
+
+            [Option('d', "debug", Required = false, Default = false, HelpText = "If enabled output will show in the console and remain open.")]
+            public bool Debug { get; set; }
         }
 
         static void Main(string[] args)
         {
             Maze maze = new Maze();
             string path = Directory.GetCurrentDirectory();
+            bool isDebug = false;
+            bool shouldView = false;
 
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(o =>
@@ -33,15 +40,36 @@ namespace MazeGenerator
                     maze.Height = o.Height;
                     maze.Noise = o.Noise;
 
-                    if (o.Path.Length > 0)
-                        path = o.Path;        
+                    if (o.Path != null)
+                        path = o.Path;
+
+                    isDebug = o.Debug;
+                    shouldView = o.View;
                 });
 
-            Console.WriteLine("Generating Maze");
-            maze.Generate();
-            Console.WriteLine("Generation Complete");
+            if (isDebug)
+                Console.WriteLine("Generating Maze");
 
-            Console.Read();
+            bool[,] map = maze.Generate(isDebug); 
+
+            Bitmap bmp = new Bitmap(maze.Width, maze.Height);
+
+            for (int y = 0; y < maze.Height; y++)
+            {
+                for (int x = 0; x < maze.Width; x++)
+                {
+                    bmp.SetPixel(x, y, map[y, x] ? Color.White : Color.Black);
+                }
+            }
+
+            string img = Path.Combine(path, "maze-" + maze.Height + "_" + maze.Width + ".png");
+            bmp.Save(img, System.Drawing.Imaging.ImageFormat.Png);
+
+            if (isDebug)
+            {
+                Console.WriteLine("Generation Complete");
+                Console.Read();
+            }
         }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MazeGenerator
 {
@@ -17,13 +14,26 @@ namespace MazeGenerator
             public int X { get; set; } = 0;
         }
 
-        public void Generate()
+        public bool[,] Generate(bool isDebug = false)
         {
             bool[,] map = new bool[Height, Width];
-            
+
+            map = CreateGenericPath(map);
+
+            if (isDebug) PrintMap(map, ". ", "X ");
+
+            map = FillWithDeadends(map);
+
+            if (isDebug) PrintMap(map);
+
+            return map;
+        }
+
+        bool[,] CreateGenericPath(bool[,] map)
+        {
             // Generates a start point in the top row
             //  * Will not chose a corner as a the point
-            Random r = new Random();            
+            Random r = new Random();
             int startPoint = r.Next(1, Width - 2);
 
             // Set start and end points to true in map
@@ -53,17 +63,14 @@ namespace MazeGenerator
                 }
             }
 
-            // Prints out the map with the guarenteed path
-            for (int y = 0; y < Height; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    Console.Write(map[y, x] ? ". " : "X ");
-                }
-                Console.WriteLine();
-            }
+            return map;
+        }
 
-            // Loops through all indexes inside the boarder
+        bool[,] FillWithDeadends(bool[,] map)
+        {
+            Random r = new Random();
+
+            // Loops through all indexes inside the border
             for (int y = 1; y < Height - 1; y++)
             {
                 for (int x = 1; x < Width - 1; x++)
@@ -78,7 +85,7 @@ namespace MazeGenerator
                         if (!map[y, x + 1]) score++;
                         if (!map[y, x + 1]) score++;
 
-                        if (score > 2)
+                        if (score > 3)
                         {
                             if (r.Next(11) > Noise)
                             {
@@ -89,19 +96,7 @@ namespace MazeGenerator
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine("====================");
-            Console.WriteLine();
-
-            // Prints out the map with the guarenteed path
-            for (int y = 0; y < Height; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    Console.Write(map[y, x] ? ", " : "X ");
-                }
-                Console.WriteLine();
-            }
+            return map;
         }
 
         Point MovePoint(bool[,] map, Point point, int direction)
@@ -137,6 +132,21 @@ namespace MazeGenerator
             }
 
             return point;
+        }
+
+        void PrintMap(bool[,] map, string path = ", ", string wall = "X ")
+        {
+            Console.WriteLine();
+
+            // Prints out the map with the guarenteed path
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    Console.Write(map[y, x] ? path : wall);
+                }
+                Console.WriteLine();
+            }
         }
 
     }
